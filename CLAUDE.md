@@ -24,3 +24,8 @@
 - Python: PEP 8
 - HTML/CSS: Bootstrap conventions
 - JavaScript: ES6+
+
+## Project Documentation
+- Keep all prompt history in PROMPT_HISTORY.md to track the development journey
+- Add each new user prompt to PROMPT_HISTORY.md with date, context, and outcome
+- Update README.md when adding significant features
