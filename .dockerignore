@@ -1,0 +1,58 @@
+# Git files
+.git
+.gitignore
+
+# Environment files
+*.env
+.env*
+backend/venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node modules
+frontend/react-app/node_modules/
+frontend/react-app/build/
+frontend/react-app/coverage/
+frontend/react-app/.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation and non-essential files
+README.md
+LICENSE
+PROMPT_HISTORY*.md
+CLAUDE.md
+
+# Database and uploads that should be on volumes
+*.db
+backend/uploads/*

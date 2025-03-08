@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  twitter-clone:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tubededentifrice/twitter-clone
+    container_name: twitter-clone
+    ports:
+      - "8000:8000"
+    volumes:
+      - twitter_db:/app/twitter_clone.db
+      - twitter_uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  twitter_db:
+    driver: local
+  twitter_uploads:
+    driver: local

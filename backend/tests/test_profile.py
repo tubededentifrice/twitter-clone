@@ -113,6 +113,23 @@ def test_get_my_profile(test_env):
     assert data["follower_count"] == 1  # user2 follows user1
     assert data["following_count"] == 2  # user1 follows user2 and user3
 
+# Test getting another user's profile
+def test_get_user_profile(test_env):
+    response = client.get("/api/profile/user2")
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["username"] == "user2"
+    assert data["follower_count"] == 1  # user1 follows user2
+    assert data["following_count"] == 1  # user2 follows user1
+
+# Test getting a non-existent user's profile
+def test_get_nonexistent_user_profile():
+    response = client.get("/api/profile/nonexistentuser")
+    
+    assert response.status_code == 404
+    assert "detail" in response.json()
+
 # Test getting followers list
 def test_get_followers(test_env):
     token = test_env["user1"]["access_token"]
@@ -126,6 +143,22 @@ def test_get_followers(test_env):
     data = response.json()
     assert len(data) == 1
     assert data[0]["username"] == "user2"
+
+# Test getting followers of a specific user
+def test_get_user_followers(test_env):
+    response = client.get("/api/profile/user1/followers")
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["username"] == "user2"
+
+# Test getting followers of a non-existent user
+def test_get_nonexistent_user_followers():
+    response = client.get("/api/profile/nonexistentuser/followers")
+    
+    assert response.status_code == 404
+    assert "detail" in response.json()
 
 # Test getting following list
 def test_get_following(test_env):
@@ -142,6 +175,24 @@ def test_get_following(test_env):
     usernames = [user["username"] for user in data]
     assert "user2" in usernames
     assert "user3" in usernames
+
+# Test getting users followed by a specific user
+def test_get_user_following(test_env):
+    response = client.get("/api/profile/user1/following")
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    usernames = [user["username"] for user in data]
+    assert "user2" in usernames
+    assert "user3" in usernames
+
+# Test getting users followed by a non-existent user
+def test_get_nonexistent_user_following():
+    response = client.get("/api/profile/nonexistentuser/following")
+    
+    assert response.status_code == 404
+    assert "detail" in response.json()
 
 # Test following a user
 def test_follow_user(test_env):
@@ -166,6 +217,45 @@ def test_follow_user(test_env):
     usernames = [user["username"] for user in data]
     assert "newuser" in usernames
 
+# Test following a non-existent user
+def test_follow_nonexistent_user(test_env):
+    token = test_env["user1"]["access_token"]
+    
+    response = client.post(
+        f"/api/profile/follow/nonexistentuser",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 404
+    assert "detail" in response.json()
+
+# Test following yourself
+def test_follow_yourself(test_env):
+    token = test_env["user1"]["access_token"]
+    
+    response = client.post(
+        f"/api/profile/follow/user1",  # Trying to follow self
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 400
+    assert "detail" in response.json()
+    assert "cannot follow yourself" in response.json()["detail"].lower()
+
+# Test following a user you already follow
+def test_follow_already_following(test_env):
+    token = test_env["user1"]["access_token"]
+    
+    # User1 already follows user2
+    response = client.post(
+        f"/api/profile/follow/user2",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 400
+    assert "detail" in response.json()
+    assert "already following" in response.json()["detail"].lower()
+
 # Test unfollowing a user
 def test_unfollow_user(test_env):
     token = test_env["user1"]["access_token"]
@@ -187,3 +277,30 @@ def test_unfollow_user(test_env):
     data = response.json()
     usernames = [user["username"] for user in data]
     assert "user2" not in usernames
+
+# Test unfollowing a user you don't follow
+def test_unfollow_not_following(test_env):
+    # Create a new user that user1 doesn't follow
+    new_user = create_test_user("notfollowed", "notfollowed@example.com", "password")
+    token = test_env["user1"]["access_token"]
+    
+    response = client.post(
+        f"/api/profile/unfollow/notfollowed",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 400
+    assert "detail" in response.json()
+    assert "not following" in response.json()["detail"].lower()
+
+# Test unfollowing a non-existent user
+def test_unfollow_nonexistent_user(test_env):
+    token = test_env["user1"]["access_token"]
+    
+    response = client.post(
+        f"/api/profile/unfollow/nonexistentuser",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 404
+    assert "detail" in response.json()

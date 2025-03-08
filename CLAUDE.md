@@ -2,7 +2,8 @@
 
 ## Project Structure
 - backend/ - FastAPI backend
-- frontend/ - Bootstrap-based frontend
+- frontend/ - Legacy Bootstrap-based frontend
+- frontend/react-app/ - React-based frontend
 
 ## Common Commands
 
@@ -14,16 +15,25 @@
   - Windows: `backend\venv\Scripts\activate`
   - Unix/MacOS: `source backend/venv/bin/activate`
 
-### Frontend
-- Serve frontend: `cd frontend && python -m http.server 8080`
+### React Frontend
+- Install dependencies: `cd frontend/react-app && npm install`
+- Start development server: `cd frontend/react-app && npm start`
+- Build for production: `cd frontend/react-app && npm run build`
+
+### Legacy Frontend
+- Serve legacy frontend: `cd frontend && python -m http.server 8080`
 
 ### Testing
 - Run backend tests: `cd backend && pytest`
+- Run React tests: `cd frontend/react-app && npm test`
+
+### Development Script
+- Run all services with interactive selection: `./run_local.sh`
 
 ## Code Style Preferences
 - Python: PEP 8
+- React/JavaScript: ES6+, using functional components with hooks
 - HTML/CSS: Bootstrap conventions
-- JavaScript: ES6+
 - Always use Linux line endings (LF) for all files
 
 ## Project Documentation
