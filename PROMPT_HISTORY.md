@@ -17,3 +17,15 @@ Claude set up:
 > Keep the whole prompt history in PROMPT_HISTORY.md; Add that instruction to CLAUDE.md
 
 Claude added PROMPT_HISTORY.md and updated CLAUDE.md with instructions to maintain the prompt history.
+
+### Improved .gitignore
+> Generate a relevant .gitignore file for the current tech stack
+
+Claude updated the .gitignore file with comprehensive patterns for:
+- Python testing and coverage files
+- Virtual environment variations
+- Additional database file types
+- OS-specific files
+- IDE configurations
+- Logs and local development files
+- Deployment-related files
