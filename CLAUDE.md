@@ -30,3 +30,8 @@
 - Keep all prompt history in PROMPT_HISTORY.md to track the development journey
 - Add each new user prompt to PROMPT_HISTORY.md with date, context, and outcome
 - Update README.md when adding significant features
+
+## Important Reminders
+- ALWAYS update PROMPT_HISTORY.md after each prompt with a brief summary of the request and actions taken
+- Ensure all files maintain Linux line endings (LF, not CRLF)
+- After each significant change, consider running linting and tests

@@ -22,13 +22,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
+                        <a class="nav-link active" href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Login</a>
+                        <a class="nav-link" href="login.html">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Register</a>
+                        <a class="nav-link" href="register.html">Register</a>
                     </li>
                 </ul>
             </div>
@@ -38,10 +38,45 @@
     <!-- Main Content -->
     <div class="container mt-5">
         <div class="row">
-            <div class="col-md-8 mx-auto text-center">
-                <h1>Welcome to Twitter Clone</h1>
-                <p class="lead">Hello World! This is a simple Twitter clone application.</p>
-                <p>This application is currently under development.</p>
+            <div class="col-md-8 mx-auto">
+                <h1 class="text-center mb-4">Twitter Clone</h1>
+                
+                <!-- Tweet Form - Only visible when logged in -->
+                <div id="tweetFormContainer" class="mb-4 d-none">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Post a new tweet</h5>
+                            <form id="tweetForm">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="tweetContent" 
+                                        rows="3" maxlength="256" placeholder="What's happening?"></textarea>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small id="charCount" class="text-muted">0/256 characters</small>
+                                        <button type="submit" class="btn btn-primary">Tweet</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Login prompt - Only visible when not logged in -->
+                <div id="loginPrompt" class="alert alert-info text-center mb-4 d-none">
+                    <p>Please <a href="login.html">login</a> or <a href="register.html">register</a> to post tweets.</p>
+                </div>
+                
+                <!-- Tweets Feed -->
+                <div id="tweetsFeed">
+                    <h5 class="mb-3">Recent Tweets</h5>
+                    <div id="tweetsContainer">
+                        <!-- Tweets will be loaded here -->
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

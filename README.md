@@ -4,11 +4,16 @@ A simplified Twitter clone built with FastAPI and Bootstrap.
 
 ## Project Overview
 
-This project is a basic Twitter clone with the following features (planned):
+This project is a basic Twitter clone with the following features:
 - User authentication (signup, login)
-- Posting tweets
+- Posting tweets (with 256 character limit)
+- Tweet feed showing all posts in reverse chronological order
+
+Planned features:
 - Following users
-- Timeline view
+- User profiles
+- Like and retweet functionality
+- Timeline showing only tweets from followed users
 
 ## Architecture
 

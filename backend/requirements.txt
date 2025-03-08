@@ -1,9 +1,10 @@
-fastapi==0.112.1
-uvicorn==0.27.1
+fastapi==0.115.11
+uvicorn==0.34.0
 sqlalchemy==2.0.38
-pydantic==2.6.4
-python-jose==3.3.0
+pydantic==2.10.6
+python-jose==3.4.0
 passlib==1.7.4
-python-multipart==0.0.9
-bcrypt==4.1.2
-pytest==8.0.0
+python-multipart==0.0.20
+bcrypt==4.3.0
+pytest==8.3.5
+email-validator==2.2.0

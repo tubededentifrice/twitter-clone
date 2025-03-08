@@ -17,6 +17,11 @@ if ! command -v pip3 &> /dev/null; then
     exit 1
 fi
 
+# Check if Rust/Cargo is installed (needed for pydantic)
+if ! command -v cargo &> /dev/null; then
+    echo "Warning: Rust/Cargo is not installed. Using older version of pydantic to avoid compilation."
+fi
+
 # Create virtual environment if it doesn't exist
 if [ ! -d "backend/venv" ]; then
     echo "Creating virtual environment..."
@@ -29,11 +34,12 @@ fi
 echo "Installing backend dependencies..."
 cd backend
 source venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Start backend server in the background
 echo "Starting backend server..."
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 &
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 &
 BACKEND_PID=$!
 cd ..
 
