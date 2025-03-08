@@ -24,6 +24,7 @@
 - Python: PEP 8
 - HTML/CSS: Bootstrap conventions
 - JavaScript: ES6+
+- Always use Linux line endings (LF) for all files
 
 ## Project Documentation
 - Keep all prompt history in PROMPT_HISTORY.md to track the development journey
