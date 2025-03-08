@@ -21,7 +21,21 @@ wheels/
 .installed.cfg
 *.egg
 venv/
+ENV/
 
 # SQLite
 *.db
 *.sqlite3
+
+# Frontend
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

@@ -1,8 +1,10 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from .database import Base
 
+# This will be expanded as we implement more features
 class User(Base):
     __tablename__ = "users"
 
@@ -10,6 +12,7 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    is_active = Column(Boolean, default=True)
+
+    # Relationships will be added as we implement more features
