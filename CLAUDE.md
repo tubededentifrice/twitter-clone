@@ -27,11 +27,13 @@
 - Always use Linux line endings (LF) for all files
 
 ## Project Documentation
-- Keep all prompt history in PROMPT_HISTORY.md to track the development journey
-- Add each new user prompt to PROMPT_HISTORY.md with date, context, and outcome
+- Maintain prompt history in numbered files (PROMPT_HISTORY_001.md, PROMPT_HISTORY_002.md, etc.), 001 being the oldest
+- Start a new prompt history file when the current file reaches 150 lines or more: make sure to check the latest PROMPT_HISTORY file length BEFORE adding to it, and create a new file accordingly
+- Add each new user prompt to the current prompt history file with date, context, and outcome
 - Update README.md when adding significant features
 
 ## Important Reminders
-- ALWAYS update PROMPT_HISTORY.md after each prompt with a brief summary of the request and actions taken
+- ALWAYS update the current prompt history file after each prompt with a brief summary of the request and actions taken
+- Check the line count of the current prompt history file and create a new numbered file when it exceeds 150 lines
 - Ensure all files maintain Linux line endings (LF, not CRLF)
 - After each significant change, consider running linting and tests

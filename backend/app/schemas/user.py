@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class UserBase(BaseModel):
     username: str
@@ -12,6 +12,19 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class UserUpdate(BaseModel):
+    profile_picture: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+class UserFollow(BaseModel):
+    user_id: int
+
+class FollowUser(BaseModel):
+    username: str
+    profile_picture: Optional[str] = None
 
 class Token(BaseModel):
     access_token: str
@@ -25,8 +38,23 @@ class TokenData(BaseModel):
 
 class User(UserBase):
     id: int
+    profile_picture: Optional[str] = None
     created_at: datetime
     is_active: bool
-
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
+        
+class UserProfile(User):
+    follower_count: int
+    following_count: int
+    
+    class Config:
+        from_attributes = True
+        
+class UserWithFollowers(User):
+    followers: List[FollowUser]
+    following: List[FollowUser]
+    
+    class Config:
+        from_attributes = True

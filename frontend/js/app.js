@@ -23,6 +23,30 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname === '/' || window.location.pathname.endsWith('index.html')) {
         loadTweets();
     }
+    
+    // Show/hide elements based on login status
+    const loggedInItems = document.querySelectorAll('.logged-in-nav-item');
+    const loggedOutItems = document.querySelectorAll('.logged-out-nav-item');
+    const userItems = document.querySelectorAll('.user-nav-item');
+    
+    if (isLoggedIn()) {
+        loggedInItems.forEach(item => item.classList.remove('d-none'));
+        loggedOutItems.forEach(item => item.classList.add('d-none'));
+        userItems.forEach(item => item.classList.remove('d-none'));
+    } else {
+        loggedInItems.forEach(item => item.classList.add('d-none'));
+        loggedOutItems.forEach(item => item.classList.remove('d-none'));
+        userItems.forEach(item => item.classList.add('d-none'));
+    }
+    
+    // Setup logout link
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+    }
 });
 
 // Authentication helper functions
@@ -66,7 +90,7 @@ function updateAuthUI() {
                 ${userInfo.username}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="profile.html">Profile</a></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
@@ -196,13 +220,7 @@ function loadTweets() {
     }
     
     // Show loading indicator
-    tweetsContainer.innerHTML = `
-        <div class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    `;
+    showTweetLoadingIndicator(tweetsContainer);
     
     fetch('http://localhost:8000/api/tweets/')
         .then(response => {
@@ -221,43 +239,11 @@ function loadTweets() {
                 return;
             }
             
-            // Display tweets
-            tweetsContainer.innerHTML = '';
-            tweets.forEach(tweet => {
-                const tweetElement = document.createElement('div');
-                tweetElement.className = 'card mb-3';
-                tweetElement.innerHTML = `
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-primary">@${tweet.author_username}</h6>
-                        <p class="card-text">${tweet.content}</p>
-                        <small class="text-muted">${formatDate(new Date(tweet.created_at))}</small>
-                    </div>
-                `;
-                tweetsContainer.appendChild(tweetElement);
-            });
+            // Display tweets using the component
+            renderTweets(tweets, tweetsContainer, true);
         })
         .catch(error => {
             console.error('Error loading tweets:', error);
-            tweetsContainer.innerHTML = `
-                <div class="alert alert-danger">
-                    Failed to load tweets. Please try again later.
-                </div>
-            `;
+            showTweetError(tweetsContainer);
         });
-}
-
-function formatDate(date) {
-    // Check if the date is today
-    const today = new Date();
-    const isToday = date.getDate() === today.getDate() &&
-                    date.getMonth() === today.getMonth() &&
-                    date.getFullYear() === today.getFullYear();
-    
-    if (isToday) {
-        // For today, show time only
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else {
-        // For other days, show date and time
-        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
 }
