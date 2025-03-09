@@ -8,8 +8,8 @@ import TweetService from '../services/tweet.service';
 // Helper function to format time elapsed in a human-readable way with correct timezone handling
 const formatTimeElapsed = (dateString) => {
   try {
-    // Create a date object directly from the ISO string
-    const tweetDate = new Date(dateString);
+    // Parse the ISO string as UTC
+    const tweetDate = new Date(dateString + 'Z');
     const now = new Date();
     
     // Calculate time difference in milliseconds
@@ -31,7 +31,7 @@ const formatTimeElapsed = (dateString) => {
     } else if (diffDays < 30) {
       return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
     } else {
-      // For older tweets, show the date
+      // For older tweets, show the date in the user's local timezone
       return tweetDate.toLocaleDateString('en-US', { 
         month: 'short',
         day: 'numeric', 
@@ -39,7 +39,7 @@ const formatTimeElapsed = (dateString) => {
       });
     }
   } catch (error) {
-    console.error("Error formatting date:", error);
+    console.error("Error formatting date:", error, "for date string:", dateString);
     return "unknown time";
   }
 };
@@ -61,8 +61,12 @@ const Tweet = ({ tweet, isDetailView = false }) => {
   // Debug the timestamp received from the server
   useEffect(() => {
     if (localTweet && localTweet.created_at) {
-      console.log(`Tweet ID: ${localTweet.id}, Raw timestamp: ${localTweet.created_at}`);
+      console.log(`Tweet ID: ${localTweet.id}`);
+      console.log(`Raw timestamp from server: ${localTweet.created_at}`);
+      console.log(`UTC-forced timestamp: ${localTweet.created_at}Z`);
       console.log(`Browser local time: ${new Date().toString()}`);
+      console.log(`UTC time: ${new Date().toISOString()}`);
+      console.log(`Parsed tweet date: ${new Date(localTweet.created_at + 'Z').toString()}`);
       console.log(`Formatted time: ${formatTimeElapsed(localTweet.created_at)}`);
     }
   }, [localTweet]);
