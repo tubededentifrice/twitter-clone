@@ -87,3 +87,22 @@ Claude:
 - Used React Router's Link component to create profile links for mentioned usernames
 - Styled @ mentions as bold blue links to make them visually distinct
 - The implementation preserves the original text content while making @ mentions interactive
+
+### Make Backend URL Configurable in Docker
+
+User Prompt:
+- "Make the backend URL configurable when running the Docker. The URL can be fqdn or just relative, depending on how we want to expose it (exemple: "https://domain.com/api" or just "/api")."
+
+Claude:
+- Modified nginx.conf to use environment variable for backend URL
+- Updated Dockerfile and Dockerfile.dev to use a template for nginx configuration
+- Created startup.sh script to substitute environment variables in nginx config
+- Added BACKEND_URL environment variable to docker-compose and docker-compose-dev files
+- Updated README.md with documentation about configuring the backend URL
+- The implementation allows specifying a full URL like https://domain.com/api or a relative path like /api
+
+### Fix Docker Nginx Backend Proxy
+
+**User Prompt:** When running the Docker image, the front end is getting 404 errors when accessing the backend
+
+**Claude:** Identified that the nginx configuration was incorrectly proxying requests to the backend. The issue was in the `frontend/react-app/nginx.conf` file where the proxy_pass directive didn't correctly append the `/api` path to the backend URL. Fixed by changing `proxy_pass ${BACKEND_URL};` to `proxy_pass ${BACKEND_URL}/api;`.
