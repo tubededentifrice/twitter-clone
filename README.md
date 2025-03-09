@@ -106,6 +106,21 @@ Use the provided script to run all services with interactive selection:
    docker-compose down
    ```
 
+### Configuring Backend URL
+You can configure the API backend URL by setting the `BACKEND_URL` environment variable:
+
+```yaml
+environment:
+  - BACKEND_URL=https://api.example.com
+```
+
+This can be:
+- A full URL like `https://domain.com/api`
+- A relative path like `/api`
+- A local URL like `http://localhost:8000`
+
+The default is `http://localhost:8000`.
+
 ### Publishing to Docker Hub
 1. Make sure you have Docker installed and are logged in to Docker Hub:
    ```

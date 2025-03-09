@@ -19,11 +19,12 @@ COPY --from=frontend-builder /app/frontend/build /app/static
 COPY --from=nginx-config /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf.template
 
 # Install Nginx, supervisor, and gettext (for envsubst)
-RUN apt-get update && apt-get install -y nginx supervisor gettext-base && \
+RUN apt-get update && apt-get install -y nginx supervisor gettext-base net-tools curl nano && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure Nginx
 RUN rm -rf /var/www/html && ln -sf /app/static /var/www/html
+RUN rm -rf /etc/nginx/sites-enabled/*
 
 # We'll use this for template substitution at container startup
 

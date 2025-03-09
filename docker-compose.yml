@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     environment:
       - ENVIRONMENT=production
+      - BACKEND_URL=http://localhost:8000
+      # Can be customized to a FQDN like https://domain.com/api or just /api
 
 volumes:
   twitter_config:

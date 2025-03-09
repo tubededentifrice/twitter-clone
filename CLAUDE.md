@@ -34,12 +34,12 @@
 
 ## Project Documentation
 - Maintain prompt history in numbered files (PROMPT_HISTORY_001.md, PROMPT_HISTORY_002.md, etc.), 001 being the oldest
-- Start a new prompt history file when the current file reaches 150 lines or more: make sure to check the latest PROMPT_HISTORY file length BEFORE adding to it, and create a new file accordingly
+- Start a new prompt history file when the current file reaches 150 lines or more: make sure to check the latest PROMPT_HISTORY file length BEFORE adding to it, and create a new file accordingly.
 - Add each new user prompt to the current prompt history file with date, context, and outcome
 - Update README.md when adding significant features
 
 ## Important Reminders
-- ALWAYS update the current prompt history file after each prompt with:
+- ALWAYS update the current prompt history file after each prompt by APPENDING to the file (newer prompts are at the bottom):
   1. A heading for the task (###)
   2. The user's prompt in a "User Prompt:" section
   3. Claude's actions in a "Claude:" section

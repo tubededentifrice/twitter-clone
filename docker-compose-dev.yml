@@ -18,6 +18,8 @@ services:
       - ENVIRONMENT=development
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:8000
+      - BACKEND_URL=http://localhost:8000
+      # Can be customized to a FQDN like https://domain.com/api or just /api
 
 volumes:
   twitter_config_dev:
