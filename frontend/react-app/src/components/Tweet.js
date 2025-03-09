@@ -1,32 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, Row, Col, Image, Badge, Button } from 'react-bootstrap';
-import { formatDistance, parseISO, formatISO, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns';
 import { HandThumbsUp, HandThumbsDown, HandThumbsUpFill, HandThumbsDownFill } from 'react-bootstrap-icons';
 import defaultAvatarImg from '../assets/default-avatar.png';
 import TweetService from '../services/tweet.service';
 
 // Helper function to format time elapsed in a human-readable way with correct timezone handling
 const formatTimeElapsed = (dateString) => {
-  const date = parseISO(dateString);
-  const now = new Date();
-  
-  const secondsAgo = differenceInSeconds(now, date);
-  const minutesAgo = differenceInMinutes(now, date);
-  const hoursAgo = differenceInHours(now, date);
-  const daysAgo = differenceInDays(now, date);
-  
-  if (secondsAgo < 60) {
-    return secondsAgo <= 10 ? 'just now' : `${secondsAgo} seconds ago`;
-  } else if (minutesAgo < 60) {
-    return `${minutesAgo} ${minutesAgo === 1 ? 'minute' : 'minutes'} ago`;
-  } else if (hoursAgo < 24) {
-    return `${hoursAgo} ${hoursAgo === 1 ? 'hour' : 'hours'} ago`;
-  } else if (daysAgo < 30) {
-    return `${daysAgo} ${daysAgo === 1 ? 'day' : 'days'} ago`;
-  } else {
-    // For older tweets, show the date in format: Feb 20, 2025
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  try {
+    // Create a date object directly from the ISO string
+    const tweetDate = new Date(dateString);
+    const now = new Date();
+    
+    // Calculate time difference in milliseconds
+    const diffMs = now - tweetDate;
+    
+    // Convert to seconds, minutes, hours
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    // Format based on the time difference
+    if (diffSeconds < 60) {
+      return diffSeconds <= 5 ? 'just now' : `${diffSeconds} seconds ago`;
+    } else if (diffMinutes < 60) {
+      return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
+    } else if (diffHours < 24) {
+      return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+    } else if (diffDays < 30) {
+      return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+    } else {
+      // For older tweets, show the date
+      return tweetDate.toLocaleDateString('en-US', { 
+        month: 'short',
+        day: 'numeric', 
+        year: 'numeric' 
+      });
+    }
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "unknown time";
   }
 };
 
@@ -42,8 +56,16 @@ const Tweet = ({ tweet, isDetailView = false }) => {
   // Use author_username if available (from backend API), fallback to username for compatibility
   const username = localTweet.author_username || localTweet.username;
   
-  // Parse the date for potential use in components that need the actual date object
-  const createdDate = parseISO(localTweet.created_at);
+  // Note: We no longer need to parse the date here as we handle it directly in formatTimeElapsed
+  
+  // Debug the timestamp received from the server
+  useEffect(() => {
+    if (localTweet && localTweet.created_at) {
+      console.log(`Tweet ID: ${localTweet.id}, Raw timestamp: ${localTweet.created_at}`);
+      console.log(`Browser local time: ${new Date().toString()}`);
+      console.log(`Formatted time: ${formatTimeElapsed(localTweet.created_at)}`);
+    }
+  }, [localTweet]);
   
   // Handle like/dislike clicks
   const handleReaction = async (type, e) => {
