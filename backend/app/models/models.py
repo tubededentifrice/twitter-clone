@@ -12,6 +12,15 @@ followers = Table(
     Column("followed_id", Integer, ForeignKey("users.id"), primary_key=True)
 )
 
+# Association table for tweet reactions (likes/dislikes)
+tweet_reactions = Table(
+    "tweet_reactions",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("tweet_id", Integer, ForeignKey("tweets.id"), primary_key=True),
+    Column("reaction_type", String, nullable=False)  # "like" or "dislike"
+)
+
 class User(Base):
     __tablename__ = "users"
 
@@ -34,6 +43,9 @@ class User(Base):
         secondaryjoin=(followers.c.follower_id == id),
         backref="following"
     )
+    
+    # Tweet reactions relationship
+    tweet_reactions = relationship("Tweet", secondary=tweet_reactions, back_populates="reacted_by")
 
 class Tweet(Base):
     __tablename__ = "tweets"
@@ -47,3 +59,4 @@ class Tweet(Base):
     # Relationships
     author = relationship("User", back_populates="tweets")
     replies = relationship("Tweet", backref="parent", remote_side=[id])
+    reacted_by = relationship("User", secondary=tweet_reactions, back_populates="tweet_reactions")

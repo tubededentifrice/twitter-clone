@@ -1,26 +1,82 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Card, Row, Col, Image, Badge } from 'react-bootstrap';
+import { Card, Row, Col, Image, Badge, Button } from 'react-bootstrap';
 import { formatDistance, parseISO } from 'date-fns';
+import { HandThumbsUp, HandThumbsDown, HandThumbsUpFill, HandThumbsDownFill } from 'react-bootstrap-icons';
 import defaultAvatarImg from '../assets/default-avatar.png';
+import TweetService from '../services/tweet.service';
 
 const Tweet = ({ tweet, isDetailView = false }) => {
   const navigate = useNavigate();
+  const [localTweet, setLocalTweet] = useState(tweet);
+  
+  // Update local state when tweet prop changes
+  useEffect(() => {
+    setLocalTweet(tweet);
+  }, [tweet]);
   
   // Use author_username if available (from backend API), fallback to username for compatibility
-  const username = tweet.author_username || tweet.username;
+  const username = localTweet.author_username || localTweet.username;
   
   // Parse the date with parseISO to ensure proper timezone handling
-  const createdDate = parseISO(tweet.created_at);
+  const createdDate = parseISO(localTweet.created_at);
+  
+  // Handle like/dislike clicks
+  const handleReaction = async (type, e) => {
+    e.stopPropagation(); // Prevent tweet click
+    
+    try {
+      await TweetService.reactToTweet(localTweet.id, type);
+      
+      // Update local state based on the current reaction
+      const currentReaction = localTweet.user_reaction;
+      
+      if (currentReaction === type) {
+        // User clicked the same reaction - remove it
+        setLocalTweet(prev => ({
+          ...prev,
+          user_reaction: null,
+          likes_count: type === 'like' ? prev.likes_count - 1 : prev.likes_count,
+          dislikes_count: type === 'dislike' ? prev.dislikes_count - 1 : prev.dislikes_count
+        }));
+      } else if (!currentReaction) {
+        // User had no reaction - add the new one
+        setLocalTweet(prev => ({
+          ...prev,
+          user_reaction: type,
+          likes_count: type === 'like' ? prev.likes_count + 1 : prev.likes_count,
+          dislikes_count: type === 'dislike' ? prev.dislikes_count + 1 : prev.dislikes_count
+        }));
+      } else {
+        // User is changing reaction
+        setLocalTweet(prev => ({
+          ...prev,
+          user_reaction: type,
+          likes_count: currentReaction === 'like' 
+            ? prev.likes_count - 1 
+            : (type === 'like' ? prev.likes_count + 1 : prev.likes_count),
+          dislikes_count: currentReaction === 'dislike' 
+            ? prev.dislikes_count - 1 
+            : (type === 'dislike' ? prev.dislikes_count + 1 : prev.dislikes_count)
+        }));
+      }
+    } catch (error) {
+      console.error("Error handling reaction:", error);
+      // If not logged in, navigate to login
+      if (error.response && error.response.status === 401) {
+        navigate('/login');
+      }
+    }
+  };
   
   // Function to handle tweet click
   const handleTweetClick = (e) => {
     // Don't navigate if clicking on a link or if we're already in detail view
-    if (e.target.tagName === 'A' || isDetailView) {
+    if (e.target.tagName === 'A' || isDetailView || e.target.closest('.reaction-buttons')) {
       return;
     }
     
-    navigate(`/tweet/${tweet.id}`);
+    navigate(`/tweet/${localTweet.id}`);
   };
   
   // Function to render tweet content with clickable @mentions
@@ -96,14 +152,42 @@ const Tweet = ({ tweet, isDetailView = false }) => {
                 </span>
               </div>
             </div>
-            <div className="mt-2">{renderTweetContent(tweet.content)}</div>
-            {tweet.replies_count > 0 && !isDetailView && (
-              <div className="mt-2">
-                <Badge bg="secondary" pill>
-                  {tweet.replies_count} {tweet.replies_count === 1 ? 'reply' : 'replies'}
+            <div className="mt-2">{renderTweetContent(localTweet.content)}</div>
+            <div className="mt-2 d-flex align-items-center">
+              {localTweet.replies_count > 0 && !isDetailView && (
+                <Badge bg="secondary" pill className="me-3">
+                  {localTweet.replies_count} {localTweet.replies_count === 1 ? 'reply' : 'replies'}
                 </Badge>
+              )}
+              
+              <div className="ms-auto reaction-buttons d-flex align-items-center">
+                <Button 
+                  variant="link" 
+                  className="text-success p-0 d-flex align-items-center me-3"
+                  onClick={(e) => handleReaction('like', e)}
+                >
+                  {localTweet.user_reaction === 'like' ? (
+                    <HandThumbsUpFill size={16} className="me-1" />
+                  ) : (
+                    <HandThumbsUp size={16} className="me-1" />
+                  )}
+                  <span>{localTweet.likes_count || 0}</span>
+                </Button>
+                
+                <Button 
+                  variant="link" 
+                  className="text-danger p-0 d-flex align-items-center"
+                  onClick={(e) => handleReaction('dislike', e)}
+                >
+                  {localTweet.user_reaction === 'dislike' ? (
+                    <HandThumbsDownFill size={16} className="me-1" />
+                  ) : (
+                    <HandThumbsDown size={16} className="me-1" />
+                  )}
+                  <span>{localTweet.dislikes_count || 0}</span>
+                </Button>
               </div>
-            )}
+            </div>
           </Col>
         </Row>
       </Card.Body>

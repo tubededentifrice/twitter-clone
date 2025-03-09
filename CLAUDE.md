@@ -46,4 +46,4 @@
 - Check the line count of the current prompt history file and create a new numbered file when it exceeds 150 lines
 - Ensure all files maintain Linux line endings (LF, not CRLF)
 - After each significant change, consider running linting and tests
-- Always git commit once you're finished with changing files
+- Always git add and git commit once you're finished with changing files

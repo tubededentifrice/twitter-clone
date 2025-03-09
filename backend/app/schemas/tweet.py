@@ -8,6 +8,9 @@ class TweetBase(BaseModel):
 class TweetCreate(TweetBase):
     parent_id: Optional[int] = None
 
+class ReactionCreate(BaseModel):
+    reaction_type: str = Field(..., pattern="^(like|dislike)$")
+
 class Tweet(TweetBase):
     id: int
     created_at: datetime
@@ -15,6 +18,9 @@ class Tweet(TweetBase):
     author_username: str
     parent_id: Optional[int] = None
     replies_count: Optional[int] = 0
+    likes_count: Optional[int] = 0
+    dislikes_count: Optional[int] = 0
+    user_reaction: Optional[str] = None  # Will be populated for authenticated users
 
     class Config:
         from_attributes = True
