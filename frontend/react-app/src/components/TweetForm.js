@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import TweetService from '../services/tweet.service';
 
-const TweetForm = ({ onTweetAdded }) => {
+const TweetForm = ({ onTweetAdded, onSubmit, placeholder = "What's happening?", buttonText = "Tweet", parentId = null }) => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -21,7 +21,15 @@ const TweetForm = ({ onTweetAdded }) => {
     setMessage("");
     setError(false);
 
-    TweetService.createTweet(content)
+    // Use custom onSubmit handler if provided, otherwise use default handler
+    if (onSubmit) {
+      onSubmit(content);
+      setLoading(false);
+      setContent("");
+      return;
+    }
+
+    TweetService.createTweet(content, parentId)
       .then(
         (response) => {
           setLoading(false);
@@ -52,7 +60,7 @@ const TweetForm = ({ onTweetAdded }) => {
           <Form.Control
             as="textarea"
             rows={3}
-            placeholder="What's happening?"
+            placeholder={placeholder}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             maxLength={280}
@@ -65,7 +73,7 @@ const TweetForm = ({ onTweetAdded }) => {
             type="submit" 
             disabled={loading || !content.trim()}
           >
-            {loading ? "Posting..." : "Tweet"}
+            {loading ? "Posting..." : buttonText}
           </Button>
         </div>
         {message && (
