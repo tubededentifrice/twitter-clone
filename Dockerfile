@@ -1,4 +1,4 @@
-FROM node:20-slim AS frontend-builder
+FROM --platform=linux/amd64 node:20-slim AS frontend-builder
 
 WORKDIR /app/frontend
 COPY frontend/react-app/package*.json ./
@@ -6,11 +6,11 @@ RUN npm install
 COPY frontend/react-app/ ./
 RUN npm run build
 
-FROM nginx:alpine AS nginx-config
+FROM --platform=linux/amd64 nginx:alpine AS nginx-config
 # Create a custom nginx configuration
 COPY frontend/react-app/nginx.conf /etc/nginx/conf.d/default.conf.template
 
-FROM python:3.11.7-slim
+FROM --platform=linux/amd64 python:3.11.7-slim
 
 WORKDIR /app
 
@@ -18,14 +18,14 @@ WORKDIR /app
 COPY --from=frontend-builder /app/frontend/build /app/static
 COPY --from=nginx-config /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf.template
 
-# Install Nginx and supervisor
-RUN apt-get update && apt-get install -y nginx supervisor && \
+# Install Nginx, supervisor, and gettext (for envsubst)
+RUN apt-get update && apt-get install -y nginx supervisor gettext-base && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure Nginx
-RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
-COPY --from=nginx-config /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf
 RUN rm -rf /var/www/html && ln -sf /app/static /var/www/html
+
+# We'll use this for template substitution at container startup
 
 # Configure supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -49,6 +49,11 @@ EXPOSE 80 8000
 ENV PYTHONPATH=/app
 ENV UPLOADS_DIR=/app/uploads
 ENV CONFIG_DIR=/app/config
+ENV BACKEND_URL=http://localhost:8000
 
-# Command to run the application using supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Create a startup script to handle environment variable substitution
+COPY startup.sh /startup.sh
+RUN chmod +x /startup.sh
+
+# Command to run the application using the startup script
+CMD ["/startup.sh"]
