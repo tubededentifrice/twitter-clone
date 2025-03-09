@@ -2,10 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Row, Col, Image } from 'react-bootstrap';
 import { formatDistance, parseISO } from 'date-fns';
+import defaultAvatarImg from '../assets/default-avatar.png';
 
 const Tweet = ({ tweet }) => {
-  const defaultAvatar = "https://via.placeholder.com/50";
-  
   // Use author_username if available (from backend API), fallback to username for compatibility
   const username = tweet.author_username || tweet.username;
   
@@ -19,7 +18,7 @@ const Tweet = ({ tweet }) => {
           <Col xs={2} md={1}>
             <Link to={`/profile/${username}`}>
               <Image 
-                src={tweet.profile_image || defaultAvatar} 
+                src={tweet.profile_image || defaultAvatarImg} 
                 className="avatar" 
                 alt={`${username}'s avatar`} 
               />
