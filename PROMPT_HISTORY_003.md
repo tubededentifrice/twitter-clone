@@ -38,3 +38,18 @@ Claude:
 - Updated PROMPT_HISTORY_003.md format to clearly indicate both user prompts and Claude's actions
 - Modified CLAUDE.md instructions to specify the required format for prompt history entries
 - Ensured all future prompt history entries will include the exact user request and Claude's response
+
+### Change Frontend Port and Update Docker Configuration
+
+User Prompt:
+- "Change the default front end port to 3025. Update the Docker files if necessary since we removed the legacy front end; Make sure the images produced are ready to deploy straight out of the box."
+
+Claude:
+- Changed React frontend to use port 3025 in package.json
+- Updated docker-compose.yml to split into separate backend and frontend services
+- Updated docker-compose-dev.yml to use port 3025 for the frontend service
+- Modified docker-publish.sh to build and push both backend and frontend images
+- Made docker-publish.sh executable
+- Updated run_local.sh to show the correct frontend URL
+- Removed references to the single-container approach in Docker configuration
+- Made all configurations production-ready

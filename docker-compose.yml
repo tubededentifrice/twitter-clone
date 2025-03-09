@@ -1,18 +1,32 @@
 version: '3'
 
 services:
-  twitter-clone:
+  backend:
     build:
-      context: .
-      dockerfile: Dockerfile
-    image: tubededentifrice/twitter-clone
-    container_name: twitter-clone
+      context: ./backend
+      dockerfile: Dockerfile.backend-only
+    image: tubededentifrice/twitter-clone-backend
+    container_name: twitter-clone-backend
     ports:
       - "8000:8000"
     volumes:
       - twitter_db:/app/twitter_clone.db
       - twitter_uploads:/app/uploads
     restart: unless-stopped
+    environment:
+      - ENVIRONMENT=production
+  
+  frontend:
+    build:
+      context: ./frontend/react-app
+      dockerfile: Dockerfile.frontend-only
+    image: tubededentifrice/twitter-clone-frontend
+    container_name: twitter-clone-frontend
+    ports:
+      - "3025:80"
+    restart: unless-stopped
+    depends_on:
+      - backend
 
 volumes:
   twitter_db:

@@ -20,14 +20,13 @@ services:
       context: ./frontend/react-app
       dockerfile: Dockerfile.frontend-only
     ports:
-      - "3000:3000"
+      - "3025:80"
     volumes:
       - ./frontend/react-app:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:8000
-    command: npm start
 
 volumes:
   twitter_db_dev:

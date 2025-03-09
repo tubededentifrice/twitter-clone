@@ -78,7 +78,7 @@ fi
 echo ""
 echo "Services started successfully!"
 echo "Backend running at: http://localhost:8000"
-echo "React frontend running at: http://localhost:3000"
+echo "React frontend running at: http://localhost:3025"
 echo "API Documentation: http://localhost:8000/docs"
 echo ""
 echo "Press Ctrl+C to stop all services"
