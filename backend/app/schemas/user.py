@@ -45,9 +45,20 @@ class User(UserBase):
     class Config:
         from_attributes = True
         
-class UserProfile(User):
+class UserPublic(BaseModel):
+    id: int
+    username: str
+    profile_picture: Optional[str] = None
+    created_at: datetime
+    is_active: bool
+    
+    class Config:
+        from_attributes = True
+
+class UserProfile(UserPublic):
     follower_count: int
     following_count: int
+    is_followed: Optional[bool] = False
     
     class Config:
         from_attributes = True

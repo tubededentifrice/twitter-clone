@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ..models.database import get_db
 from ..models.models import User
-from ..schemas.user import UserProfile, UserUpdate, UserFollow, UserWithFollowers, FollowUser
+from ..schemas.user import UserProfile, UserUpdate, UserFollow, UserWithFollowers, FollowUser, UserPublic
 from ..utils.auth import get_current_user, get_current_user_optional
 
 router = APIRouter(
@@ -30,7 +30,6 @@ async def get_my_profile(current_user: User = Depends(get_current_user), db: Ses
     return {
         "id": current_user.id,
         "username": current_user.username,
-        "email": current_user.email,
         "profile_picture": current_user.profile_picture,
         "created_at": current_user.created_at,
         "is_active": current_user.is_active,
@@ -55,30 +54,37 @@ async def get_user_profile(
     follower_count = len(user.followers)
     following_count = len(user.following)
     
+    # Check authentication status
+    print(f"\nDEBUG - Authentication status: {'Authenticated' if current_user else 'Not authenticated'}")
+    
     # Check if the current user is following this profile
     is_followed = False
     if current_user and current_user.id != user.id:
         # Print debug information
-        print(f"\nDEBUG - Current user: {current_user.username}")
-        print(f"DEBUG - Profile user: {user.username}")
+        print(f"DEBUG - Current user: {current_user.username} (ID: {current_user.id})")
+        print(f"DEBUG - Profile user: {user.username} (ID: {user.id})")
         
         # Check directly from the database using the followers association table
         from sqlalchemy import select, exists
         from ..models.models import followers
         
         # Query to check if current_user is following user
-        stmt = select([exists().where(followers.c.follower_id == current_user.id)
-                              .where(followers.c.followed_id == user.id)])
+        stmt = select(exists().where(followers.c.follower_id == current_user.id)
+                              .where(followers.c.followed_id == user.id))
         result = db.execute(stmt).scalar()
         
         is_followed = bool(result)
         
         print(f"DEBUG - Direct SQL check - is_followed: {is_followed}")
+        
+        # List all followers for this user to verify relationship
+        print(f"DEBUG - Listing all followers for {user.username}:")
+        for follower in user.followers:
+            print(f"  - {follower.username} (ID: {follower.id})")
     
     response = {
         "id": user.id,
         "username": user.username,
-        "email": user.email,
         "profile_picture": user.profile_picture,
         "created_at": user.created_at,
         "is_active": user.is_active,
@@ -209,8 +215,8 @@ async def follow_user(username: str, current_user: User = Depends(get_current_us
     from ..models.models import followers
     
     # Query to check if current_user is following user_to_follow
-    stmt = select([exists().where(followers.c.follower_id == current_user.id)
-                          .where(followers.c.followed_id == user_to_follow.id)])
+    stmt = select(exists().where(followers.c.follower_id == current_user.id)
+                          .where(followers.c.followed_id == user_to_follow.id))
     is_following = db.execute(stmt).scalar()
     
     if is_following:
@@ -230,7 +236,10 @@ async def follow_user(username: str, current_user: User = Depends(get_current_us
     
     print(f"DEBUG - {current_user.username} started following {user_to_follow.username}")
     
-    return {"message": f"You are now following {username}"}
+    return {
+        "message": f"You are now following {username}",
+        "is_followed": True
+    }
 
 @router.post("/unfollow/{username}")
 async def unfollow_user(username: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -246,8 +255,8 @@ async def unfollow_user(username: str, current_user: User = Depends(get_current_
     from ..models.models import followers
     
     # Query to check if current_user is following user_to_unfollow
-    stmt = select([exists().where(followers.c.follower_id == current_user.id)
-                          .where(followers.c.followed_id == user_to_unfollow.id)])
+    stmt = select(exists().where(followers.c.follower_id == current_user.id)
+                          .where(followers.c.followed_id == user_to_unfollow.id))
     is_following = db.execute(stmt).scalar()
     
     if not is_following:
@@ -266,4 +275,7 @@ async def unfollow_user(username: str, current_user: User = Depends(get_current_
     
     print(f"DEBUG - {current_user.username} unfollowed {user_to_unfollow.username}")
     
-    return {"message": f"You have unfollowed {username}"}
+    return {
+        "message": f"You have unfollowed {username}",
+        "is_followed": False
+    }
