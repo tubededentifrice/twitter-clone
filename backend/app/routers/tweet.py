@@ -6,7 +6,7 @@ from typing import List, Optional
 from ..models.database import get_db
 from ..models.models import Tweet, User, tweet_reactions
 from ..schemas.tweet import TweetCreate, Tweet as TweetSchema, TweetDetail, ReactionCreate
-from ..utils.auth import get_current_user
+from ..utils.auth import get_current_user, get_current_user_optional
 
 router = APIRouter(
     prefix="/api/tweets",
@@ -41,7 +41,7 @@ async def create_tweet(tweet: TweetCreate, current_user: User = Depends(get_curr
     }
 
 @router.get("/", response_model=List[TweetSchema])
-async def get_tweets(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: Optional[User] = Depends(get_current_user)):
+async def get_tweets(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
     # Only get top-level tweets (not replies) for the main feed
     tweets = db.query(Tweet).filter(Tweet.parent_id == None).order_by(Tweet.created_at.desc()).offset(skip).limit(limit).all()
     
@@ -110,7 +110,7 @@ async def get_tweet_count(username: str, db: Session = Depends(get_db)):
     return {"count": count, "username": username}
 
 @router.get("/user/{username}", response_model=List[TweetSchema])
-async def get_user_tweets(username: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: Optional[User] = Depends(get_current_user)):
+async def get_user_tweets(username: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
     user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(
@@ -171,7 +171,7 @@ async def get_user_tweets(username: str, skip: int = 0, limit: int = 100, db: Se
     return result
 
 @router.get("/{tweet_id}", response_model=TweetDetail)
-async def get_tweet(tweet_id: int, db: Session = Depends(get_db), current_user: Optional[User] = Depends(get_current_user)):
+async def get_tweet(tweet_id: int, db: Session = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
     tweet = db.query(Tweet).filter(Tweet.id == tweet_id).first()
     if not tweet:
         raise HTTPException(

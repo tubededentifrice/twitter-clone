@@ -4,14 +4,14 @@ This file contains the history of prompts used with Claude Code to develop this 
 
 ## March 9, 2025
 
-### Remove User Private Details from Profile Endpoints
+### Make Tweet Feed Viewable Without Login
 
-**User Prompt:** When fetching a user profile, make sure it doesn't include the user private details (it's email and password)
+User Prompt:
+- "The base feed shouldn't required to be logged in; the default home page should display the feed (without being able to post to it of course)."
 
-**Claude:**
-- Created a new UserPublic Pydantic model without email field
-- Modified UserProfile to inherit from UserPublic instead of User
-- Removed email from the response in /api/profile/me endpoint
-- Removed email from the response in /api/profile/{username} endpoint
-- Ensured password hashes were never exposed in any endpoint
-- These changes ensure user privacy by not exposing emails in public-facing profile endpoints
+Claude:
+- Modified the backend API to use optional authentication for tweet endpoints:
+  - Imported `get_current_user_optional` dependency function in tweet.py
+  - Updated the GET routes to use optional authentication for `/tweets/`, `/tweets/user/{username}`, and `/tweets/{tweet_id}`
+  - Used the existing conditional rendering in the frontend to only show the tweet form when logged in
+  - This allows unauthenticated users to view public tweets without logging in
