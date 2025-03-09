@@ -5,7 +5,7 @@ import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
 const Navbar = ({ currentUser, logout }) => {
   return (
     <BootstrapNavbar bg="light" expand="lg" className="mb-4">
-      <Container>
+      <Container fluid>
         <BootstrapNavbar.Brand as={Link} to="/">Twitter Clone</BootstrapNavbar.Brand>
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BootstrapNavbar.Collapse id="basic-navbar-nav">

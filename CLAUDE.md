@@ -2,7 +2,6 @@
 
 ## Project Structure
 - backend/ - FastAPI backend
-- frontend/ - Legacy Bootstrap-based frontend
 - frontend/react-app/ - React-based frontend
 
 ## Common Commands
@@ -19,9 +18,6 @@
 - Install dependencies: `cd frontend/react-app && npm install`
 - Start development server: `cd frontend/react-app && npm start`
 - Build for production: `cd frontend/react-app && npm run build`
-
-### Legacy Frontend
-- Serve legacy frontend: `cd frontend && python -m http.server 8080`
 
 ### Testing
 - Run backend tests: `cd backend && pytest`
@@ -43,7 +39,10 @@
 - Update README.md when adding significant features
 
 ## Important Reminders
-- ALWAYS update the current prompt history file after each prompt with a brief summary of the request and actions taken
+- ALWAYS update the current prompt history file after each prompt with:
+  1. A heading for the task (###)
+  2. The user's prompt in a "User Prompt:" section
+  3. Claude's actions in a "Claude:" section
 - Check the line count of the current prompt history file and create a new numbered file when it exceeds 150 lines
 - Ensure all files maintain Linux line endings (LF, not CRLF)
 - After each significant change, consider running linting and tests

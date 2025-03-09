@@ -36,9 +36,9 @@ const Login = ({ setCurrentUser }) => {
   };
 
   return (
-    <Container>
+    <Container fluid>
       <Row className="justify-content-md-center">
-        <Col md={6}>
+        <Col>
           <Card>
             <Card.Body>
               <div className="text-center mb-4">

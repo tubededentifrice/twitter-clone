@@ -39,9 +39,9 @@ const Home = ({ currentUser }) => {
   };
 
   return (
-    <Container>
+    <Container fluid>
       <Row>
-        <Col md={8} className="mx-auto">
+        <Col>
           <Card className="mb-4 border-0">
             <Card.Body>
               <h4 className="mb-3">Home</h4>

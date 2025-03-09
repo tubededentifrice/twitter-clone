@@ -24,7 +24,7 @@ function App() {
 
   return (
     <Router>
-      <div className="container">
+      <div className="container-fluid">
         <Navbar currentUser={currentUser} logout={logout} />
         <Routes>
           <Route path="/" element={currentUser ? <Home currentUser={currentUser} /> : <Navigate to="/login" />} />

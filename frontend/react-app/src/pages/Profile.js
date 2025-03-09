@@ -7,6 +7,7 @@ import {
 import Tweet from '../components/Tweet';
 import UserService from '../services/user.service';
 import TweetService from '../services/tweet.service';
+import defaultAvatarImg from '../assets/default-avatar.png';
 
 const Profile = ({ currentUser }) => {
   const { username } = useParams();
@@ -23,8 +24,7 @@ const Profile = ({ currentUser }) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const defaultAvatar = "https://via.placeholder.com/150";
-
+  
   const isOwnProfile = currentUser && currentUser.username === username;
   
   const fetchProfileData = React.useCallback(() => {
@@ -181,7 +181,7 @@ const Profile = ({ currentUser }) => {
   }
 
   return (
-    <Container>
+    <Container fluid>
       {profile && (
         <>
           <Card className="mb-4 profile-header">
@@ -189,7 +189,7 @@ const Profile = ({ currentUser }) => {
               <Row>
                 <Col md={3} className="text-center">
                   <Image 
-                    src={profile.profile_image || defaultAvatar} 
+                    src={profile.profile_image || defaultAvatarImg} 
                     className="avatar-lg mb-3" 
                     alt={`${username}'s avatar`} 
                   />
@@ -317,7 +317,7 @@ const Profile = ({ currentUser }) => {
                         <Col md={6} key={follower.username} className="mb-3">
                           <div className="d-flex align-items-center">
                             <Image 
-                              src={follower.profile_image || defaultAvatar} 
+                              src={follower.profile_image || defaultAvatarImg} 
                               className="avatar me-3" 
                               alt={`${follower.username}'s avatar`} 
                             />
@@ -349,7 +349,7 @@ const Profile = ({ currentUser }) => {
                         <Col md={6} key={follow.username} className="mb-3">
                           <div className="d-flex align-items-center">
                             <Image 
-                              src={follow.profile_image || defaultAvatar} 
+                              src={follow.profile_image || defaultAvatarImg} 
                               className="avatar me-3" 
                               alt={`${follow.username}'s avatar`} 
                             />
