@@ -112,3 +112,38 @@ Claude:
 **User Prompt:** startup.sh calls envsubst but I don't think it's installed on the Docker image, as the default.conf file is empty
 
 **Claude:** Added the gettext-base package to the Dockerfile which provides the envsubst utility. Modified the RUN command that installs nginx and supervisor to also install gettext-base.
+
+### Fix Follow Button API Endpoint Mismatch
+
+**User Prompt:** When clicking on the "Follow" button on the user's profile, I'm getting "Error: Not Found"
+
+**Claude:** Identified a mismatch between the frontend and backend API endpoints for following/unfollowing users. Fixed the issue by:
+1. Changed the followUser endpoint in user.service.js from `/profile/${username}/follow` to `/profile/follow/${username}`
+2. Changed the unfollowUser endpoint from DELETE `/profile/${username}/follow` to POST `/profile/unfollow/${username}`
+These changes align the frontend API calls with the actual backend endpoints defined in profile.py.
+
+### Fix Follow Button State Display
+
+**User Prompt:** The button is still "Follow" on the profile page or people you already follow
+
+**Claude:** Fixed the issue by implementing proper follow status tracking:
+1. Added `is_followed` field to the UserProfile Pydantic model
+2. Updated the profile endpoint to check if the current user is following the viewed profile
+3. Created a new `get_current_user_optional` dependency that doesn't error on unauthenticated requests
+4. Modified the auth.py file to support optional authentication
+These changes ensure the Follow/Unfollow button correctly displays the current relationship status.
+
+### Fix Missing Import Error for get_current_user_optional
+
+**User Prompt:** Fix this error: uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 [Error shows NameError: name 'get_current_user_optional' is not defined]
+
+**Claude:** Fixed the missing import error in the profile.py router by adding get_current_user_optional to the imports from the auth module. The function was implemented in auth.py but wasn't imported in profile.py where it was being used.
+
+### Fix Follow/Unfollow Button Text Issue
+
+**User Prompt:** When on the user profile of a user I follow, the button is still "Follow" instead of "Unfollow"
+
+**Claude:** Fixed the issue with the follow/unfollow button not displaying correctly:
+1. Found that the issue was in how the frontend was handling the `is_followed` value from the backend
+2. Modified the Profile component to properly set the `isFollowing` state based on the backend response by using strict equality check
+3. Updated the profile image handling in the follower list to handle null values properly

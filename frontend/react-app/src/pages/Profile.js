@@ -37,7 +37,8 @@ const Profile = ({ currentUser }) => {
         (response) => {
           setProfile(response.data);
           setBio(response.data.bio || "");
-          setIsFollowing(response.data.is_followed || false);
+          // Make sure is_followed is properly handled (it could be undefined)
+          setIsFollowing(response.data.is_followed === true);
           
           // Fetch user's tweets
           TweetService.getUserTweets(username)
@@ -106,7 +107,7 @@ const Profile = ({ currentUser }) => {
             if (currentUser) {
               setFollowers([...followers, { 
                 username: currentUser.username,
-                profile_image: currentUser.profile_image
+                profile_image: currentUser.profile_image || null
               }]);
             }
           },
