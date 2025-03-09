@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Script to build and publish Docker images to Docker Hub
+# Script to build and publish Docker image to Docker Hub
 
 # Colors for terminal output
 GREEN='\033[0;32m'
@@ -13,8 +13,8 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}Logging in to Docker Hub...${NC}"
 docker login
 
-# Build the images
-echo -e "${BLUE}Building Docker images...${NC}"
+# Build the image
+echo -e "${BLUE}Building Docker image...${NC}"
 docker-compose build
 
 # Tag with version if provided
@@ -22,38 +22,22 @@ if [ -n "$1" ]; then
   VERSION=$1
   echo -e "${BLUE}Tagging with version: ${GREEN}$VERSION${NC}"
   
-  # Tag backend
-  docker tag tubededentifrice/twitter-clone-backend:latest tubededentifrice/twitter-clone-backend:$VERSION
-  
-  # Tag frontend
-  docker tag tubededentifrice/twitter-clone-frontend:latest tubededentifrice/twitter-clone-frontend:$VERSION
+  # Tag the image
+  docker tag tubededentifrice/twitter-clone:latest tubededentifrice/twitter-clone:$VERSION
 fi
 
 # Push to Docker Hub
-echo -e "${BLUE}Pushing images to Docker Hub...${NC}"
+echo -e "${BLUE}Pushing image to Docker Hub...${NC}"
+docker push tubededentifrice/twitter-clone:latest
 
-# Push backend
-echo -e "${BLUE}Pushing backend image...${NC}"
-docker push tubededentifrice/twitter-clone-backend:latest
-
-# Push frontend
-echo -e "${BLUE}Pushing frontend image...${NC}"
-docker push tubededentifrice/twitter-clone-frontend:latest
-
-# Push version tags if provided
+# Push version tag if provided
 if [ -n "$1" ]; then
-  echo -e "${BLUE}Pushing version tags: ${GREEN}$VERSION${NC}"
-  
-  # Push backend version
-  docker push tubededentifrice/twitter-clone-backend:$VERSION
-  
-  # Push frontend version
-  docker push tubededentifrice/twitter-clone-frontend:$VERSION
+  echo -e "${BLUE}Pushing version tag: ${GREEN}$VERSION${NC}"
+  docker push tubededentifrice/twitter-clone:$VERSION
 fi
 
 echo -e "${GREEN}Successfully published to Docker Hub!${NC}"
-echo -e "Backend image: ${GREEN}tubededentifrice/twitter-clone-backend${NC}"
-echo -e "Frontend image: ${GREEN}tubededentifrice/twitter-clone-frontend${NC}"
+echo -e "Image: ${GREEN}tubededentifrice/twitter-clone${NC}"
 echo -e ""
 echo -e "To run the application:"
 echo -e "${BLUE}docker-compose up -d${NC}"

@@ -1,30 +1,21 @@
 version: '3'
 
 services:
-  backend:
+  app:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.backend-only
+      context: .
+      dockerfile: Dockerfile.dev
     ports:
+      - "3025:80"
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./frontend/react-app:/app/frontend
       - twitter_db_dev:/app/twitter_clone.db
       - twitter_uploads_dev:/app/uploads
+      - /app/frontend/node_modules
     environment:
       - ENVIRONMENT=development
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    
-  frontend:
-    build:
-      context: ./frontend/react-app
-      dockerfile: Dockerfile.frontend-only
-    ports:
-      - "3025:80"
-    volumes:
-      - ./frontend/react-app:/app
-      - /app/node_modules
-    environment:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:8000
 
