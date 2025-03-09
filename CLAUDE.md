@@ -47,3 +47,4 @@
 - Ensure all files maintain Linux line endings (LF, not CRLF)
 - After each significant change, consider running linting and tests
 - Always git add and git commit once you're finished with changing files
+- Always keep a newline at the end of files

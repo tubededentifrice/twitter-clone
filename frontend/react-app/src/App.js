@@ -12,9 +12,13 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   
   useEffect(() => {
+    // Get current user from localStorage on component mount
     const user = AuthService.getCurrentUser();
     if (user) {
       setCurrentUser(user);
+      console.log("User authenticated:", user.username);
+    } else {
+      console.log("No authenticated user found");
     }
   }, []);
 

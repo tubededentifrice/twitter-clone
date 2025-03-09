@@ -4,7 +4,10 @@ import authHeader from "./auth-header";
 const API_URL = "/api";
 
 const getUserProfile = (username) => {
-  return axios.get(API_URL + `/profile/${username}`);
+  // Include auth header for all profile requests to ensure authenticated state
+  const headers = authHeader();
+  console.log("Auth headers for profile request:", headers);
+  return axios.get(API_URL + `/profile/${username}`, { headers });
 };
 
 const updateProfile = (bio) => {
@@ -17,15 +20,16 @@ const updateProfile = (bio) => {
 
 const followUser = (username) => {
   return axios.post(
-    API_URL + `/profile/${username}/follow`,
+    API_URL + `/profile/follow/${username}`,
     {},
     { headers: authHeader() }
   );
 };
 
 const unfollowUser = (username) => {
-  return axios.delete(
-    API_URL + `/profile/${username}/follow`,
+  return axios.post(
+    API_URL + `/profile/unfollow/${username}`,
+    {},
     { headers: authHeader() }
   );
 };

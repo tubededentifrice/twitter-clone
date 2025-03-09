@@ -40,9 +40,12 @@ const Profile = ({ currentUser }) => {
           
           setProfile(response.data);
           setBio(response.data.bio || "");
-          // Make sure is_followed is properly handled (it could be undefined)
-          setIsFollowing(response.data.is_followed === true);
-          console.log("isFollowing state set to:", response.data.is_followed === true);
+          
+          // Force refresh the follow state from server response
+          const followStatus = response.data.is_followed === true;
+          console.log("Server reports follow status:", followStatus);
+          setIsFollowing(followStatus);
+          console.log("isFollowing state set to:", followStatus);
           
           // Fetch user's tweets
           TweetService.getUserTweets(username)
@@ -79,9 +82,11 @@ const Profile = ({ currentUser }) => {
       );
   }, [username]);
   
+  // Refetch profile data whenever the username changes or the component mounts
   useEffect(() => {
+    console.log("Fetching profile data for:", username);
     fetchProfileData();
-  }, [fetchProfileData]);
+  }, [fetchProfileData, username]);
 
   const handleFetchError = (error) => {
     const resMessage =
@@ -97,8 +102,9 @@ const Profile = ({ currentUser }) => {
     if (isFollowing) {
       UserService.unfollowUser(username)
         .then(
-          () => {
-            setIsFollowing(false);
+          (response) => {
+            // Use the is_followed value from the response
+            setIsFollowing(response.data.is_followed);
             setFollowers(followers.filter(f => f.username !== currentUser.username));
           },
           (error) => handleFetchError(error)
@@ -106,12 +112,13 @@ const Profile = ({ currentUser }) => {
     } else {
       UserService.followUser(username)
         .then(
-          () => {
-            setIsFollowing(true);
+          (response) => {
+            // Use the is_followed value from the response
+            setIsFollowing(response.data.is_followed);
             if (currentUser) {
               setFollowers([...followers, { 
                 username: currentUser.username,
-                profile_image: currentUser.profile_image || null
+                profile_image: currentUser.profile_picture || null
               }]);
             }
           },
