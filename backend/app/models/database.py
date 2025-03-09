@@ -104,5 +104,8 @@ def run_migrations():
         
         # Create followers table if it doesn't exist
         create_followers_table()
+        
+        # Add parent_id column to tweets table for reply functionality
+        add_column_if_not_exists("tweets", "parent_id", "INTEGER")
     except Exception as e:
         print(f"Migration error: {e}")

@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import TweetDetail from './pages/TweetDetail';
 import AuthService from './services/auth.service';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/login" element={!currentUser ? <Login setCurrentUser={setCurrentUser} /> : <Navigate to="/" />} />
           <Route path="/register" element={!currentUser ? <Register /> : <Navigate to="/" />} />
           <Route path="/profile/:username" element={<Profile currentUser={currentUser} />} />
+          <Route path="/tweet/:id" element={<TweetDetail currentUser={currentUser} />} />
         </Routes>
       </div>
     </Router>

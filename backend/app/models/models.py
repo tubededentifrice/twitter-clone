@@ -42,6 +42,8 @@ class Tweet(Base):
     content = Column(String(256), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     author_id = Column(Integer, ForeignKey("users.id"))
+    parent_id = Column(Integer, ForeignKey("tweets.id"), nullable=True)
     
     # Relationships
     author = relationship("User", back_populates="tweets")
+    replies = relationship("Tweet", backref="parent", remote_side=[id])

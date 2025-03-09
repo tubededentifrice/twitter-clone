@@ -7,10 +7,10 @@ const getAllTweets = () => {
   return axios.get(API_URL + "/tweets/");
 };
 
-const createTweet = (content) => {
+const createTweet = (content, parentId = null) => {
   return axios.post(
     API_URL + "/tweets/", 
-    { content },
+    { content, parent_id: parentId },
     { headers: authHeader() }
   );
 };
@@ -19,10 +19,15 @@ const getUserTweets = (username) => {
   return axios.get(API_URL + `/tweets/user/${username}`);
 };
 
+const getTweet = (tweetId) => {
+  return axios.get(API_URL + `/tweets/${tweetId}`);
+};
+
 const TweetService = {
   getAllTweets,
   createTweet,
   getUserTweets,
+  getTweet,
 };
 
 export default TweetService;

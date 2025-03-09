@@ -53,3 +53,15 @@ Claude:
 - Updated run_local.sh to show the correct frontend URL
 - Removed references to the single-container approach in Docker configuration
 - Made all configurations production-ready
+
+### Make @ Mentions in Tweets Clickable
+
+User Prompt:
+- "Make sure @ mentions in tweets are clickable and links to that user's profile"
+
+Claude:
+- Modified the Tweet.js component to parse tweet content and identify @ mentions
+- Implemented a renderTweetContent function that converts @ mentions to clickable links
+- Used React Router's Link component to create profile links for mentioned usernames
+- Styled @ mentions as bold blue links to make them visually distinct
+- The implementation preserves the original text content while making @ mentions interactive
