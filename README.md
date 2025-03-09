@@ -7,15 +7,18 @@ A simplified Twitter clone built with FastAPI and React.
 This project is a basic Twitter clone with the following features:
 - User authentication (signup, login)
 - Posting tweets (with 280 character limit)
-- Tweet feed showing all posts in reverse chronological order
+- Tweet feed showing all posts in reverse chronological order (accessible without login)
 - User profiles with profile picture management
 - Follow/unfollow users functionality
 - Follower/following lists management
+- Like and dislike reactions on tweets
+- Tweet replies and conversations
+- Clickable @mentions that link to user profiles
 
 Planned features:
-- Like and retweet functionality
 - Timeline showing only tweets from followed users
-- Tweet replies and conversations
+- Media attachments for tweets
+- Hashtags and trending topics
 
 ## Architecture
 
@@ -70,22 +73,7 @@ Planned features:
    npm start
    ```
 
-4. Open your browser and navigate to `http://localhost:3000`
-
-### Legacy Frontend
-The project also includes a legacy frontend built with vanilla HTML, CSS, and JavaScript:
-
-1. Navigate to the frontend directory:
-   ```
-   cd frontend
-   ```
-
-2. Start a simple HTTP server:
-   ```
-   python -m http.server 8080
-   ```
-
-3. Open your browser and navigate to `http://localhost:8080`
+4. Open your browser and navigate to `http://localhost:3025`
 
 ### Run All Services
 Use the provided script to run all services with interactive selection:
@@ -137,9 +125,10 @@ The default is `http://localhost:8000`.
    ./docker-publish.sh v1.0.0
    ```
 
-3. Pull the image from Docker Hub:
+3. Pull the images from Docker Hub:
    ```
-   docker pull tubededentifrice/twitter-clone
+   docker pull tubededentifrice/twitter-clone-backend
+   docker pull tubededentifrice/twitter-clone-frontend
    ```
 
 ### Docker Volumes
