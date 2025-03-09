@@ -26,12 +26,8 @@ const Profile = ({ currentUser }) => {
   const defaultAvatar = "https://via.placeholder.com/150";
 
   const isOwnProfile = currentUser && currentUser.username === username;
-
-  useEffect(() => {
-    fetchProfileData();
-  }, [username]);
-
-  const fetchProfileData = () => {
+  
+  const fetchProfileData = React.useCallback(() => {
     setLoading(true);
     setError(null);
 
@@ -76,7 +72,11 @@ const Profile = ({ currentUser }) => {
           setLoading(false);
         }
       );
-  };
+  }, [username]);
+  
+  useEffect(() => {
+    fetchProfileData();
+  }, [fetchProfileData]);
 
   const handleFetchError = (error) => {
     const resMessage =
@@ -291,7 +291,14 @@ const Profile = ({ currentUser }) => {
             <Tab eventKey="tweets" title="Tweets">
               {tweets.length > 0 ? (
                 tweets.map((tweet) => (
-                  <Tweet key={tweet.id} tweet={tweet} />
+                  <Tweet 
+                    key={tweet.id} 
+                    tweet={{
+                      ...tweet,
+                      profile_image: profile.profile_image,
+                      username: profile.username || username
+                    }} 
+                  />
                 ))
               ) : (
                 <Alert variant="info">

@@ -118,4 +118,42 @@ Claude:
 - Added Docker-related documentation:
   - Updated README.md with Docker deployment instructions
   - Created .env.example for environment variable configuration
-  - Added entries to PROMPT_HISTORY_002.md
+  - Added entries to PROMPT_HISTORY_002.md# Update PROMPT_HISTORY_002.md
+
+## March 9, 2025
+
+### Compilation Errors
+
+Claude:
+- Fixed React compilation errors: installed missing date-fns dependency and fixed useEffect hook dependency issue in Profile.js component
+
+### Fix Login and Profile Component Issues
+
+Claude:
+- Fixed login endpoint in auth.service.js: changed from incorrect `/api/token` to correct `/api/users/login`
+- Fixed reference error in Profile.js component: resolved "Cannot access 'fetchProfileData' before initialization" by properly ordering function definition before its use in useEffect
+
+### Fix Registration Endpoint
+
+Claude:
+- Fixed registration endpoint in auth.service.js: changed from incorrect `/api/user/` to correct `/api/users/register`
+- This fixes 404 error when trying to register new users in the React frontend
+
+### Remove Legacy Frontend
+
+Claude:
+- Removed the old Bootstrap-based frontend (HTML, CSS, and JS files)
+- Kept only the React frontend in frontend/react-app/
+- Updated CLAUDE.md to remove references to the legacy frontend
+- Updated run_local.sh script to only start the React frontend
+- The legacy code was backed up to /tmp/twitter-clone-legacy-backup/ before removal
+
+### Fix Tweet Display and Timezone Issues
+
+Claude:
+- Fixed missing username in tweets on profile pages by ensuring username is consistently available
+- Fixed timezone display issues in tweets by properly parsing dates with parseISO from date-fns
+- Updated Tweet component to handle both author_username (from backend) and username (for compatibility)
+- Ensured profile pages correctly pass profile image data to tweets for consistent display
+- These changes ensure tweets display consistently across all pages with correct username and timestamps
+
