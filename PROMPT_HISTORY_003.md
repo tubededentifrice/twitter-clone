@@ -106,3 +106,9 @@ Claude:
 **User Prompt:** When running the Docker image, the front end is getting 404 errors when accessing the backend
 
 **Claude:** Identified that the nginx configuration was incorrectly proxying requests to the backend. The issue was in the `frontend/react-app/nginx.conf` file where the proxy_pass directive didn't correctly append the `/api` path to the backend URL. Fixed by changing `proxy_pass ${BACKEND_URL};` to `proxy_pass ${BACKEND_URL}/api;`.
+
+### Install envsubst in Docker Image
+
+**User Prompt:** startup.sh calls envsubst but I don't think it's installed on the Docker image, as the default.conf file is empty
+
+**Claude:** Added the gettext-base package to the Dockerfile which provides the envsubst utility. Modified the RUN command that installs nginx and supervisor to also install gettext-base.
