@@ -147,3 +147,36 @@ These changes ensure the Follow/Unfollow button correctly displays the current r
 1. Found that the issue was in how the frontend was handling the `is_followed` value from the backend
 2. Modified the Profile component to properly set the `isFollowing` state based on the backend response by using strict equality check
 3. Updated the profile image handling in the follower list to handle null values properly
+
+### Fix Follow/Unfollow Button State Persistence
+
+**User Prompt:** When following a user, the button is switched to "Unfollow" immediately. But if the page is refreshed or I'm coming back to the same profile I followed, the button is back to "Follow"
+
+**Claude:** Fixed the issue with follow/unfollow button state not persisting:
+1. Updated the backend API endpoints (follow/unfollow) to return the updated follow status in the response
+2. Modified the frontend Profile component to use the follow status from the API response rather than manually setting it
+3. Fixed a minor issue in the frontend with profile image property naming (profile_image vs profile_picture)
+
+### Debug Authentication and Fix Follow State Persistence
+
+**User Prompt:** The problem persists. I can confirm the user is properly followed as I can see it in the list of "following", and I'm getting an error that I already follow that user if I click the button again.
+
+**Claude:** Added extensive debugging and fixed authentication issues:
+1. Added detailed debug logging in the backend for token verification and user authentication
+2. Made sure profile requests include the authentication token in the headers
+3. Enhanced error handling in token verification to catch and log specific issues
+4. Modified the Profile component to properly update the isFollowing state from API response
+5. Added more detailed logging in the frontend to track authentication and follow state
+6. Ensured UI state correctly reflects the server-side follow relationship status
+
+### Fix Timezone Issues in Tweet Timestamps
+
+**User Prompt:** In the feed, there is a problem with timezones: it says "4 hours ago" for tweets I just posted (I'm GMT+4).
+
+**Claude:** Fixed the timezone issues in the Tweet component:
+1. Implemented a custom `formatTimeElapsed` helper function that properly handles timezone differences
+2. Replaced date-fns `formatDistance` with the custom function for displaying relative times
+3. Added more granular time displays (seconds, minutes, hours, days)
+4. Ensured new tweets display "just now" when first posted
+5. The custom function uses direct time differencing to avoid timezone discrepancies
+6. Improved the UX by showing "just now" for very recent tweets (< 10 seconds)

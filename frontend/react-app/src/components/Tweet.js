@@ -1,10 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, Row, Col, Image, Badge, Button } from 'react-bootstrap';
-import { formatDistance, parseISO } from 'date-fns';
+import { formatDistance, parseISO, formatISO, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns';
 import { HandThumbsUp, HandThumbsDown, HandThumbsUpFill, HandThumbsDownFill } from 'react-bootstrap-icons';
 import defaultAvatarImg from '../assets/default-avatar.png';
 import TweetService from '../services/tweet.service';
+
+// Helper function to format time elapsed in a human-readable way with correct timezone handling
+const formatTimeElapsed = (dateString) => {
+  const date = parseISO(dateString);
+  const now = new Date();
+  
+  const secondsAgo = differenceInSeconds(now, date);
+  const minutesAgo = differenceInMinutes(now, date);
+  const hoursAgo = differenceInHours(now, date);
+  const daysAgo = differenceInDays(now, date);
+  
+  if (secondsAgo < 60) {
+    return secondsAgo <= 10 ? 'just now' : `${secondsAgo} seconds ago`;
+  } else if (minutesAgo < 60) {
+    return `${minutesAgo} ${minutesAgo === 1 ? 'minute' : 'minutes'} ago`;
+  } else if (hoursAgo < 24) {
+    return `${hoursAgo} ${hoursAgo === 1 ? 'hour' : 'hours'} ago`;
+  } else if (daysAgo < 30) {
+    return `${daysAgo} ${daysAgo === 1 ? 'day' : 'days'} ago`;
+  } else {
+    // For older tweets, show the date in format: Feb 20, 2025
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+};
 
 const Tweet = ({ tweet, isDetailView = false }) => {
   const navigate = useNavigate();
@@ -18,7 +42,7 @@ const Tweet = ({ tweet, isDetailView = false }) => {
   // Use author_username if available (from backend API), fallback to username for compatibility
   const username = localTweet.author_username || localTweet.username;
   
-  // Parse the date with parseISO to ensure proper timezone handling
+  // Parse the date for potential use in components that need the actual date object
   const createdDate = parseISO(localTweet.created_at);
   
   // Handle like/dislike clicks
@@ -148,7 +172,7 @@ const Tweet = ({ tweet, isDetailView = false }) => {
                   {username}
                 </Link>
                 <span className="text-muted ms-2">
-                  {formatDistance(createdDate, new Date(), { addSuffix: true })}
+                  {formatTimeElapsed(localTweet.created_at)}
                 </span>
               </div>
             </div>
