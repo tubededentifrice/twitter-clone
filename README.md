@@ -127,8 +127,7 @@ The default is `http://localhost:8000`.
 
 3. Pull the images from Docker Hub:
    ```
-   docker pull tubededentifrice/twitter-clone-backend
-   docker pull tubededentifrice/twitter-clone-frontend
+   docker pull tubededentifrice/twitter-clone
    ```
 
 ### Docker Volumes
