@@ -11,14 +11,14 @@ services:
       - "3025:80"
       - "8000:8000"
     volumes:
-      - twitter_db:/app/twitter_clone.db
+      - twitter_config:/app/config
       - twitter_uploads:/app/uploads
     restart: unless-stopped
     environment:
       - ENVIRONMENT=production
 
 volumes:
-  twitter_db:
+  twitter_config:
     driver: local
   twitter_uploads:
     driver: local

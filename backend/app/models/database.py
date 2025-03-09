@@ -4,9 +4,13 @@ from sqlalchemy.orm import sessionmaker
 import sqlite3
 import os
 
-# SQLite database for development
-SQLALCHEMY_DATABASE_URL = "sqlite:///./twitter_clone.db"
-DB_FILE = "./twitter_clone.db"
+# Directory for configuration files
+CONFIG_DIR = os.environ.get("CONFIG_DIR", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config"))
+os.makedirs(CONFIG_DIR, exist_ok=True)
+
+# SQLite database location
+DB_FILE = os.path.join(CONFIG_DIR, "twitter_clone.db")
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_FILE}"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}

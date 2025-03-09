@@ -4,6 +4,28 @@ This file contains the history of prompts used with Claude Code to develop this 
 
 ## March 9, 2025
 
+### Reorganize Database into Config Directory and Update Docker Configuration
+
+User Prompt:
+- Requested to move the database to a "config" folder for better Docker volume mounting
+- Asked to fix the volume configurations in Docker files
+- Requested to remove backend-only and frontend-only Docker files
+
+Claude:
+- Created a new config directory in the backend folder
+- Updated database.py to use the new CONFIG_DIR path for database storage
+- Modified Docker volume configurations:
+  - Changed twitter_db to twitter_config in docker-compose.yml
+  - Changed twitter_db_dev to twitter_config_dev in docker-compose-dev.yml
+- Updated Dockerfile and Dockerfile.dev to:
+  - Create the config directory
+  - Set CONFIG_DIR environment variable
+- Removed backend/Dockerfile.backend-only and frontend/react-app/Dockerfile.frontend-only
+- Updated README.md to reflect the new volume configuration
+- Added backend/config/ to .gitignore
+
+## March 9, 2025
+
 ### Add Generic Profile Picture
 
 User Prompt:

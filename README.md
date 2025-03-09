@@ -129,7 +129,7 @@ Use the provided script to run all services with interactive selection:
 
 ### Docker Volumes
 The application uses Docker volumes to persist data:
-- `twitter_db`: Stores the SQLite database
+- `twitter_config`: Stores configuration files including the SQLite database
 - `twitter_uploads`: Stores user uploaded files
 
 ## Running Tests

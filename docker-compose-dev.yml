@@ -11,7 +11,7 @@ services:
     volumes:
       - ./backend:/app
       - ./frontend/react-app:/app/frontend
-      - twitter_db_dev:/app/twitter_clone.db
+      - twitter_config_dev:/app/config
       - twitter_uploads_dev:/app/uploads
       - /app/frontend/node_modules
     environment:
@@ -20,7 +20,7 @@ services:
       - REACT_APP_API_URL=http://localhost:8000
 
 volumes:
-  twitter_db_dev:
+  twitter_config_dev:
     driver: local
   twitter_uploads_dev:
     driver: local

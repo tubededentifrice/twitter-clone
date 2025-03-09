@@ -10,7 +10,7 @@ FROM nginx:alpine AS nginx-config
 # Create a custom nginx configuration
 COPY frontend/react-app/nginx.conf /etc/nginx/conf.d/default.conf.template
 
-FROM python:3.11-slim
+FROM python:3.11.7-slim
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y nginx supervisor && \
 
 # Configure Nginx
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
-COPY frontend/react-app/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=nginx-config /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf
 RUN rm -rf /var/www/html && ln -sf /app/static /var/www/html
 
 # Configure supervisor
@@ -32,14 +32,15 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Install Python dependencies
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && \
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt && \
     rm requirements.txt
 
 # Copy backend code
 COPY backend/ /app/
 
-# Create uploads directory
-RUN mkdir -p /app/uploads
+# Create uploads and config directories
+RUN mkdir -p /app/uploads /app/config
 
 # Expose ports
 EXPOSE 80 8000
@@ -47,6 +48,7 @@ EXPOSE 80 8000
 # Set environment variables
 ENV PYTHONPATH=/app
 ENV UPLOADS_DIR=/app/uploads
+ENV CONFIG_DIR=/app/config
 
 # Command to run the application using supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
