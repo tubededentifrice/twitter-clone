@@ -1,50 +1,67 @@
 # CLAUDE.md - Project Information
 
 ## Project Structure
-- backend/ - FastAPI backend
-- frontend/react-app/ - React-based frontend
+- `backend/` - FastAPI backend
+- `frontend/react-app/` - React frontend
 
 ## Common Commands
 
 ### Backend
-- Start development server: `cd backend && uvicorn app.main:app --reload`
-- Install dependencies: `cd backend && pip install -r requirements.txt`
-- Create virtual environment: `cd backend && python -m venv venv`
-- Activate virtual environment: 
-  - Windows: `backend\venv\Scripts\activate`
-  - Unix/MacOS: `source backend/venv/bin/activate`
+```bash
+# Start server
+cd backend && uvicorn app.main:app --reload
 
-### React Frontend
-- Install dependencies: `cd frontend/react-app && npm install`
-- Start development server: `cd frontend/react-app && npm start`
-- Build for production: `cd frontend/react-app && npm run build`
+# Setup
+cd backend && python -m venv venv
+cd backend && pip install -r requirements.txt
 
-### Testing
-- Run backend tests: `cd backend && pytest`
-- Run React tests: `cd frontend/react-app && npm test`
+# Activate venv
+# Windows: backend\venv\Scripts\activate
+# Unix/MacOS: source backend/venv/bin/activate
 
-### Development Script
-- Run all services with interactive selection: `./run_local.sh`
+# Test
+cd backend && pytest
+```
 
-## Code Style Preferences
+### Frontend
+```bash
+# Start server
+cd frontend/react-app && npm start
+
+# Setup
+cd frontend/react-app && npm install
+
+# Build
+cd frontend/react-app && npm run build
+
+# Test
+cd frontend/react-app && npm test
+```
+
+### Development
+```bash
+# Run all services with selection menu
+./run_local.sh
+```
+
+## Code Style
 - Python: PEP 8
-- React/JavaScript: ES6+, using functional components with hooks
-- HTML/CSS: Bootstrap conventions
-- Always use Linux line endings (LF) for all files
+- JavaScript: ES6+, functional components with hooks
+- CSS: Bootstrap conventions
+- Always use Linux line endings (LF)
 
-## Project Documentation
-- Maintain prompt history in numbered files (PROMPT_HISTORY_001.md, PROMPT_HISTORY_002.md, etc.), 001 being the oldest
-- Start a new prompt history file when the current file reaches 150 lines or more: make sure to check the latest PROMPT_HISTORY file length BEFORE adding to it, and create a new file accordingly.
-- Add each new user prompt to the current prompt history file with date, context, and outcome
-- Update README.md when adding significant features
+## Documentation Rules
+- PROMPT_HISTORY files are numbered sequentially (001, 002, etc.)
+- CHECK file length BEFORE adding to prompt history
+- CREATE new file when current exceeds 150 lines
+- ALWAYS update prompt history with:
+  1. Task heading (###)
+  2. User prompt in "User Prompt:" section
+  3. Claude's actions in "Claude:" section
+- UPDATE README.md for significant features
 
-## Important Reminders
-- ALWAYS update the current prompt history file after each prompt by APPENDING to the file (newer prompts are at the bottom):
-  1. A heading for the task (###)
-  2. The user's prompt in a "User Prompt:" section
-  3. Claude's actions in a "Claude:" section
-- Check the line count of the current prompt history file and create a new numbered file when it exceeds 150 lines
-- Ensure all files maintain Linux line endings (LF, not CRLF)
-- After each significant change, consider running linting and tests
-- Always git add and git commit once you're finished with changing files
-- Always keep a newline at the end of files
+## After Each Task
+- MAINTAIN Linux line endings (LF, not CRLF)
+- RUN linting and tests for significant changes
+- GIT add and commit all changed files
+- ENSURE newline at end of files
