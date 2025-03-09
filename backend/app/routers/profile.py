@@ -9,7 +9,7 @@ from pathlib import Path
 from ..models.database import get_db
 from ..models.models import User
 from ..schemas.user import UserProfile, UserUpdate, UserFollow, UserWithFollowers, FollowUser
-from ..utils.auth import get_current_user
+from ..utils.auth import get_current_user, get_current_user_optional
 
 router = APIRouter(
     prefix="/api/profile",
@@ -39,7 +39,11 @@ async def get_my_profile(current_user: User = Depends(get_current_user), db: Ses
     }
 
 @router.get("/{username}", response_model=UserProfile)
-async def get_user_profile(username: str, db: Session = Depends(get_db)):
+async def get_user_profile(
+    username: str, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user_optional)
+):
     user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(
@@ -51,7 +55,27 @@ async def get_user_profile(username: str, db: Session = Depends(get_db)):
     follower_count = len(user.followers)
     following_count = len(user.following)
     
-    return {
+    # Check if the current user is following this profile
+    is_followed = False
+    if current_user and current_user.id != user.id:
+        # Print debug information
+        print(f"\nDEBUG - Current user: {current_user.username}")
+        print(f"DEBUG - Profile user: {user.username}")
+        
+        # Check directly from the database using the followers association table
+        from sqlalchemy import select, exists
+        from ..models.models import followers
+        
+        # Query to check if current_user is following user
+        stmt = select([exists().where(followers.c.follower_id == current_user.id)
+                              .where(followers.c.followed_id == user.id)])
+        result = db.execute(stmt).scalar()
+        
+        is_followed = bool(result)
+        
+        print(f"DEBUG - Direct SQL check - is_followed: {is_followed}")
+    
+    response = {
         "id": user.id,
         "username": user.username,
         "email": user.email,
@@ -59,8 +83,13 @@ async def get_user_profile(username: str, db: Session = Depends(get_db)):
         "created_at": user.created_at,
         "is_active": user.is_active,
         "follower_count": follower_count,
-        "following_count": following_count
+        "following_count": following_count,
+        "is_followed": is_followed
     }
+    
+    print(f"DEBUG - API response is_followed: {is_followed}")
+    
+    return response
 
 @router.post("/update-profile-picture")
 async def update_profile_picture(
@@ -176,15 +205,30 @@ async def follow_user(username: str, current_user: User = Depends(get_current_us
         )
     
     # Check if already following
-    if user_to_follow in current_user.following:
+    from sqlalchemy import select, exists
+    from ..models.models import followers
+    
+    # Query to check if current_user is following user_to_follow
+    stmt = select([exists().where(followers.c.follower_id == current_user.id)
+                          .where(followers.c.followed_id == user_to_follow.id)])
+    is_following = db.execute(stmt).scalar()
+    
+    if is_following:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You are already following this user"
         )
     
-    # Add to following
-    current_user.following.append(user_to_follow)
+    # Add to following - using direct SQL to ensure correct relationship
+    from sqlalchemy import insert
+    stmt = insert(followers).values(
+        follower_id=current_user.id,
+        followed_id=user_to_follow.id
+    )
+    db.execute(stmt)
     db.commit()
+    
+    print(f"DEBUG - {current_user.username} started following {user_to_follow.username}")
     
     return {"message": f"You are now following {username}"}
 
@@ -197,15 +241,29 @@ async def unfollow_user(username: str, current_user: User = Depends(get_current_
             detail="User not found"
         )
     
-    # Check if following
-    if user_to_unfollow not in current_user.following:
+    # Check if following using direct SQL
+    from sqlalchemy import select, exists, delete
+    from ..models.models import followers
+    
+    # Query to check if current_user is following user_to_unfollow
+    stmt = select([exists().where(followers.c.follower_id == current_user.id)
+                          .where(followers.c.followed_id == user_to_unfollow.id)])
+    is_following = db.execute(stmt).scalar()
+    
+    if not is_following:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You are not following this user"
         )
     
-    # Remove from following
-    current_user.following.remove(user_to_unfollow)
+    # Remove the following relationship using direct SQL
+    stmt = delete(followers).where(
+        followers.c.follower_id == current_user.id,
+        followers.c.followed_id == user_to_unfollow.id
+    )
+    db.execute(stmt)
     db.commit()
+    
+    print(f"DEBUG - {current_user.username} unfollowed {user_to_unfollow.username}")
     
     return {"message": f"You have unfollowed {username}"}

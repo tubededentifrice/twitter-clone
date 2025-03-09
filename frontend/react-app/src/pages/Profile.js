@@ -35,10 +35,14 @@ const Profile = ({ currentUser }) => {
     UserService.getUserProfile(username)
       .then(
         (response) => {
+          console.log("Profile API response:", response.data);
+          console.log("is_followed value:", response.data.is_followed);
+          
           setProfile(response.data);
           setBio(response.data.bio || "");
           // Make sure is_followed is properly handled (it could be undefined)
           setIsFollowing(response.data.is_followed === true);
+          console.log("isFollowing state set to:", response.data.is_followed === true);
           
           // Fetch user's tweets
           TweetService.getUserTweets(username)
@@ -270,12 +274,15 @@ const Profile = ({ currentUser }) => {
                   </div>
                   
                   {currentUser && !isOwnProfile && (
-                    <Button 
-                      variant={isFollowing ? "outline-primary" : "primary"}
-                      onClick={handleFollow}
-                    >
-                      {isFollowing ? "Unfollow" : "Follow"}
-                    </Button>
+                    <>
+                      {console.log("Button rendering - isFollowing:", isFollowing)}
+                      <Button 
+                        variant={isFollowing ? "outline-primary" : "primary"}
+                        onClick={handleFollow}
+                      >
+                        {isFollowing ? "Unfollow" : "Follow"}
+                      </Button>
+                    </>
                   )}
                 </Col>
               </Row>
